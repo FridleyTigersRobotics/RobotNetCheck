@@ -46,17 +46,21 @@ def display_info(ip):
         if json_data is not None:
             print(json.dumps(json_data, indent=4))  # pretty-printing JSON
 
-    if (lastaddr=="2"):
+    elif (lastaddr=="2"):
         print(colored("roboRIO found",'green'))
 
-    if (lastaddr=="4"):
+    elif (lastaddr=="4"):
         print(colored("VH-109 team access point radio found, showing status:",'green'))
         json_data = get_json(ip)
         if json_data is not None:
             print(json.dumps(json_data, indent=4))  # pretty-printing JSON
+
+    elif (lastaddr=="20"):
+        print(colored("2227 BotBay Router found",'green'))
     
     else:
-        print(colored("unknown active device",'red'))
+        print(colored("unknown active device found:",'red'))
+        print(colored(ip,'red'))
 
 def get_ip():
     host_name = socket.gethostname()
@@ -72,7 +76,7 @@ print("Computer Host Name: " + host_name)
 print("IP Address: " + ip_address)
 print(colored("scanning FRC static IPs (1-19)...",'yellow'))
 
-for i in range(1, 20):
+for i in range(1, 21):
     ip = f"10.{d1}.{d2}.{i}"
     response = subprocess.call(['ping', '-n', '1', '-w', '1', ip], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
