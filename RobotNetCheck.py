@@ -36,24 +36,30 @@ def get_json(ip):
         print(str(e))
         return None
 
-def display_info(ip):
+def display_info(ip, printstatus):
     ip_components = ip.split('.')
     lastaddr=ip_components[-1]
 
     if (lastaddr=="1"):
-        print(colored("VH-109 robot radio found, showing status:",'green'))
+        print(colored("VH-109 robot radio found",'green'))
         json_data = get_json(ip)
-        if json_data is not None:
+        if json_data is not None and printstatus is True:
             print(json.dumps(json_data, indent=4))  # pretty-printing JSON
 
     elif (lastaddr=="2"):
         print(colored("roboRIO found",'green'))
 
     elif (lastaddr=="4"):
-        print(colored("VH-109 team access point radio found, showing status:",'green'))
+        print(colored("VH-109 team access point radio found",'green'))
         json_data = get_json(ip)
-        if json_data is not None:
+        if json_data is not None and printstatus is True:
             print(json.dumps(json_data, indent=4))  # pretty-printing JSON
+
+    elif (lastaddr=="5"):
+        print(colored("Driver Station with Static IP found",'green'))
+
+    elif (lastaddr=="11"):
+        print(colored("Limelight found",'green'))
 
     elif (lastaddr=="20"):
         print(colored("2227 BotBay Router found",'green'))
@@ -67,8 +73,19 @@ def get_ip():
     ip_address = socket.gethostbyname(host_name)
     return host_name, ip_address
 
+def print_radio_status():
+    while True:
+        answer = input("Show VH-109 radio status? (y/n): ")
+        if answer.lower() in ['y', 'yes']:
+            return True
+        elif answer.lower() in ['n', 'no']:
+            return False
+        else:
+            print("Invalid input. Please enter 'y' or 'n'.")
+
 #begin main code
 team_number = get_team_number()
+printstatus=print_radio_status()
 d1, d2 = split_team_number(team_number)
 spinner = itertools.cycle(['-', '/', '|', '\\'])
 host_name, ip_address = get_ip()
@@ -82,7 +99,7 @@ for i in range(1, 21):
 
     if response == 0:
         print(colored(f"\rPing to {ip} successful.",'blue'))
-        display_info(ip)
+        display_info(ip,printstatus)
         
     else:
         sys.stdout.write("\r" + next(spinner))
